@@ -7,6 +7,7 @@ from Modules.sms import init_func, SMS
 account_sid = 'ACdfe59ee99f5540d6532ae2c77265df02'
 auth_token = '4cf87d9c40d5962e9d7706e421ac62e9'
 client = Client(account_sid, auth_token)
+default_number = '+18286046338'
 
 app = Flask(__name__)
 
@@ -26,8 +27,8 @@ def respondSMS():
         notifySMS()
     else:
         message_body = 'Please reply with "hours" ' \
-                        'to see our regular business hours, or reply "details" for information on our detailing ' \
-                        'services. Thank you.'
+                       'to see our regular business hours, or reply "details" for information on our detailing ' \
+                       'services. Thank you.'
     resp = MessagingResponse()
     print(MessagingResponse)
     resp.message('Thank you for contacting Bearded Bros Detailing. {}'.format(message_body))
@@ -35,11 +36,18 @@ def respondSMS():
 
 
 def sendSMS():
+    body = input('What message would you like to send?')
+    sender = input('What number would you like to send this from? Press enter for default [' + default_number + ']')
+    receiver = input('What number would you like to send this message to?')
+    if sender == '':
+        sender = str(default_number)
+    else:
+        sender = str(sender)
     message = client.messages \
         .create(
-        body="Join Earth's mightiest heroes. Like Kevin Bacon.",
-        from_='+18286046338',
-        to='+18053403833'
+        body=str(body),
+        from_=sender,
+        to=str(receiver)
     )
 
     print(message.sid)
@@ -52,5 +60,8 @@ def notifySMS():
         body='Knok-Knok! This is your first Notify SMS')
     print(notification.sid)
 
+
 if __name__ == '__main__':
     app.run(debug=True)
+    sendSMS()
+
